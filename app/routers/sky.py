@@ -45,17 +45,17 @@ def sign_year(req: SignYearRequest) -> dict[str, Any]:
 
 @router.post("/sign-day")
 def sign_day(req: SignDayRequest) -> dict[str, Any]:
-    return sign_sky.sign_day(req.sign_num, req.date, req.tz)
+    return sign_sky.sign_day(req.sign_num, req.date, req.tz, req.lang)
 
 
 @router.post("/sign-week")
 def sign_week(req: SignWeekRequest) -> dict[str, Any]:
-    return sign_sky.sign_week(req.sign_num, req.from_, req.tz)
+    return sign_sky.sign_week(req.sign_num, req.from_, req.tz, req.lang)
 
 
 @router.post("/sign-month")
 def sign_month(req: SignMonthRequest) -> dict[str, Any]:
-    return sign_sky.sign_month(req.sign_num, req.year, req.month, req.tz)
+    return sign_sky.sign_month(req.sign_num, req.year, req.month, req.tz, req.lang)
 
 
 @router.post("/solar-return-next")

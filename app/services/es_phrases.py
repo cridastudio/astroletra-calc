@@ -3,11 +3,17 @@
 They state facts only (positions, houses, times, dates); interpretation is left to
 the client. Neutral Spanish for Spain and Latin America, second
 person singular. Every time carries its city ("ninguna hora sin su ciudad").
+
+``en_phrases`` has the same public functions in English; ``sign_sky`` picks the module
+with the ``lang`` of the request. Sign, planet and aspect names come in as the English
+identifiers used in the JSON (``Scorpio``, ``Mars``, ``square``).
 """
 
 from __future__ import annotations
 
-from datetime import datetime
+from collections.abc import Sequence
+from datetime import date, datetime
+from typing import Any
 
 SIGN_ES: dict[str, str] = {
     "Aries": "Aries", "Taurus": "Tauro", "Gemini": "Géminis", "Cancer": "Cáncer",
@@ -98,7 +104,7 @@ def degree(in_sign: float) -> str:
     return f"{deg}°{minutes:02d}'"
 
 
-def date_es(when: datetime) -> str:
+def date_es(when: date | datetime) -> str:
     return f"{when.day} de {MONTHS_ES[when.month - 1]}"
 
 
@@ -125,3 +131,129 @@ def point(key: str) -> str:
 
 def cap(text: str) -> str:
     return text[:1].upper() + text[1:]
+
+
+# Language-neutral names of the helpers above (``en_phrases`` defines the same ones).
+date_text = date_es
+time_text = time_es
+when_text = when_es
+
+
+def ruler(name: str) -> str:
+    """'Marte, tu regente', 'la Luna, tu regente'."""
+    return f"{planet(name, capital=False)}, tu regente"
+
+
+# --------------------------------------------------------------------------- sentences
+
+_EXACT = {"sextile": "exacto", "trine": "exacto"}  # the other three aspects are feminine
+_ECLIPSE_KIND = {"total": "total", "annular": "anular", "partial": "parcial", "penumbral": "penumbral", "hybrid": "híbrido"}
+
+
+def moon_ingress(sign_name: str, house_num: int, when: datetime, tz: str, *, with_date: bool) -> str:
+    return f"La Luna entra en {sign(sign_name)}, {house(house_num)}, {when_es(when, tz, with_date=with_date)}."
+
+
+def planet_ingress(name: str, sign_name: str, house_num: int, when: datetime, tz: str, *, retrograde: bool, with_date: bool) -> str:
+    retro = " retrógrado" if retrograde else ""
+    return f"{planet(name)}{retro} entra en {sign(sign_name)}, {house(house_num)}, {when_es(when, tz, with_date=with_date)}."
+
+
+def lunation(
+    phase: str,
+    in_sign: float,
+    sign_name: str,
+    house_num: int,
+    when: datetime,
+    tz: str,
+    *,
+    with_date: bool,
+    eclipse_type: str | None = None,
+    eclipse_kind: str | None = None,
+) -> str:
+    """New or full Moon, or the eclipse that comes with it (``eclipse_type`` solar/lunar)."""
+    where = f"a {degree(in_sign)} de {sign(sign_name)}, en {house(house_num)}"
+    if eclipse_type:
+        kind = _ECLIPSE_KIND.get(eclipse_kind or "", eclipse_kind)
+        name = f"Eclipse {'solar' if eclipse_type == 'solar' else 'lunar'} {kind}"
+    else:
+        name = "Luna nueva" if phase == "new" else "Luna llena"
+    return f"{name} {where}, {when_es(when, tz, with_date=with_date)}."
+
+
+def station(name: str, direction: str, in_sign: float, sign_name: str, house_num: int, when: datetime, tz: str, *, with_date: bool) -> str:
+    """``direction``: ``retrograde`` or ``direct``."""
+    word = "retrógrado" if direction == "retrograde" else "directo"
+    return (
+        f"{planet(name)} se estaciona {word} a {degree(in_sign)} de {sign(sign_name)}, "
+        f"en {house(house_num)}, {when_es(when, tz, with_date=with_date)}."
+    )
+
+
+def aspect_exact(name: str, aspect: str, target: str, when: datetime, tz: str, *, with_date: bool, to_ruler: bool) -> str:
+    """``target`` comes from :func:`point` or :func:`ruler`."""
+    comma = "," if to_ruler else ""
+    return f"{planet(name)} forma {ASPECT_ES[aspect]} {_EXACT.get(aspect, 'exacta')} con {target}{comma} {when_es(when, tz, with_date=with_date)}."
+
+
+def aspect_near(name: str, aspect: str, target: str, minutes: int) -> str:
+    """An aspect that stays within orb all day without perfecting."""
+    return f"{planet(name)} mantiene {ASPECT_ES[aspect]} con {target}, a {minutes}' del exacto."
+
+
+def sky_aspect(p1: str, house1: int, aspect: str, p2: str, house2: int, when: datetime, tz: str) -> str:
+    return (
+        f"{planet(p1)} ({house(house1)}) forma {ASPECT_ES[aspect]} {_EXACT.get(aspect, 'exacta')} "
+        f"con {planet(p2, capital=False)} ({house(house2)}) {when_es(when, tz, with_date=False)}."
+    )
+
+
+def moon_changes_sign(from_sign: str, from_house: int, sign_name: str, house_num: int, when: datetime, tz: str) -> str:
+    return (
+        f"La Luna pasa de {sign(from_sign)} ({house(from_house)}) "
+        f"a {sign(sign_name)} ({house(house_num)}) {time_es(when, tz)}."
+    )
+
+
+def moon_all_day(sign_name: str, house_num: int, next_sign: str, next_house: int, when: datetime, tz: str) -> str:
+    return (
+        f"La Luna está en {sign(sign_name)} ({house(house_num)}) todo el día "
+        f"y entra en {sign(next_sign)} ({house(next_house)}) {when_es(when, tz, with_date=True)}."
+    )
+
+
+def moon_in_sign(sign_name: str, house_num: int) -> str:
+    return f"La Luna está en {sign(sign_name)} ({house(house_num)})."
+
+
+def sun_position(in_sign: float, sign_name: str, house_num: int) -> str:
+    return f"El Sol está a {degree(in_sign)} de {sign(sign_name)}, en {house(house_num)}."
+
+
+def sun_through(sign_name: str, house_num: int, period: str) -> str:
+    """``period``: ``week`` or ``month``."""
+    span = "toda la semana" if period == "week" else "todo el mes"
+    return f"El Sol recorre {sign(sign_name)} ({house(house_num)}) {span}."
+
+
+def moon_phase(stage: str | None, illumination: float, name: str | None = None) -> str:
+    """Waxing or waning Moon and its lit fraction (``name`` is not used in Spanish)."""
+    word = "creciente" if stage == "waxing" else "menguante"
+    return f"Luna {word}, con el {round(illumination * 100)} % del disco iluminado."
+
+
+def retrogrades(periods: Sequence[dict[str, Any]]) -> str | None:
+    """One sentence for the retrograde periods that affect the sign (``planet``, ``signs``,
+    ``houses``, ``since`` and ``until`` as ISO dates); ``None`` when there are none."""
+    parts = []
+    for p in periods:
+        sign_txt = " y ".join(sign(s) for s in p["signs"])
+        houses = " y ".join(str(h) for h in p["houses"])
+        house_txt = f"tu casa {houses}" if len(p["houses"]) == 1 else f"tus casas {houses}"
+        since = date_es(date.fromisoformat(p["since"]))
+        until = date_es(date.fromisoformat(p["until"]))
+        parts.append(f"{planet(p['planet'])} en {sign_txt} ({house_txt}), del {since} al {until}")
+    if not parts:
+        return None
+    plural = len(parts) > 1
+    return f"Retrógrado{'s' if plural else ''} que te afecta{'n' if plural else ''}: {'; '.join(parts)}."

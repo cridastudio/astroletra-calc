@@ -1,0 +1,22 @@
+{
+ "generated_at": "2026-11-06T23:15:23Z",
+ "generator": "astroletra-calc 0.1.0 tools/export_static.py",
+ "ephemeris": "libephemeris (JPL DE440) via Kerykeion 6, geocentric tropical",
+ "from": "2026-01-01",
+ "to": "2028-12-31",
+ "city_zones": {
+  "madrid": "Europe/Madrid",
+  "mexico_city": "America/Mexico_City",
+  "buenos_aires": "America/Argentina/Buenos_Aires",
+  "bogota": "America/Bogota",
+  "santiago": "America/Santiago",
+  "new_york": "America/New_York",
+  "los_angeles": "America/Los_Angeles",
+  "london": "Europe/London"
+ },
+ "files": [
+  "lunations.json",
+  "retrogrades.json",
+  "eclipses.json"
+ ]
+}

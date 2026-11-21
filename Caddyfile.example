@@ -1,0 +1,8 @@
+# /etc/caddy/Caddyfile on your server. Caddy obtains and renews the TLS certificate.
+calc.example.com {
+    encode gzip
+    reverse_proxy 127.0.0.1:8000
+    request_body {
+        max_size 16MB
+    }
+}

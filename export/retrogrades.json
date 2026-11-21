@@ -1,0 +1,878 @@
+{
+ "generated_at": "2026-11-06T23:15:23Z",
+ "generator": "astroletra-calc 0.1.0 tools/export_static.py",
+ "ephemeris": "libephemeris (JPL DE440) via Kerykeion 6, geocentric tropical",
+ "from": "2026-01-01",
+ "to": "2028-12-31",
+ "city_zones": {
+  "madrid": "Europe/Madrid",
+  "mexico_city": "America/Mexico_City",
+  "buenos_aires": "America/Argentina/Buenos_Aires",
+  "bogota": "America/Bogota",
+  "santiago": "America/Santiago",
+  "new_york": "America/New_York",
+  "los_angeles": "America/Los_Angeles",
+  "london": "Europe/London"
+ },
+ "planets": [
+  "Mercury",
+  "Venus",
+  "Mars",
+  "Jupiter",
+  "Saturn"
+ ],
+ "count": 18,
+ "periods": [
+  {
+   "planet": "Jupiter",
+   "from": "2025-11-11",
+   "to": "2026-03-11",
+   "days": 120,
+   "station_retrograde": {
+    "datetime_utc": "2025-11-11T16:41:26Z",
+    "date": "2025-11-11",
+    "sign": "Cancer",
+    "sign_num": 3,
+    "degree": 25.15,
+    "abs_degree": 115.153,
+    "local": {
+     "madrid": "2025-11-11T17:41+01:00",
+     "mexico_city": "2025-11-11T10:41-06:00",
+     "buenos_aires": "2025-11-11T13:41-03:00",
+     "bogota": "2025-11-11T11:41-05:00",
+     "santiago": "2025-11-11T13:41-03:00",
+     "new_york": "2025-11-11T11:41-05:00",
+     "los_angeles": "2025-11-11T08:41-08:00",
+     "london": "2025-11-11T16:41+00:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2026-03-11T03:29:53Z",
+    "date": "2026-03-11",
+    "sign": "Cancer",
+    "sign_num": 3,
+    "degree": 15.09,
+    "abs_degree": 105.087,
+    "local": {
+     "madrid": "2026-03-11T04:29+01:00",
+     "mexico_city": "2026-03-10T21:29-06:00",
+     "buenos_aires": "2026-03-11T00:29-03:00",
+     "bogota": "2026-03-10T22:29-05:00",
+     "santiago": "2026-03-11T00:29-03:00",
+     "new_york": "2026-03-10T23:29-04:00",
+     "los_angeles": "2026-03-10T20:29-07:00",
+     "london": "2026-03-11T03:29+00:00"
+    }
+   },
+   "signs": [
+    "Cancer"
+   ],
+   "shadow_from": "2025-08-17",
+   "shadow_to": "2026-06-06"
+  },
+  {
+   "planet": "Mercury",
+   "from": "2026-02-26",
+   "to": "2026-03-20",
+   "days": 22,
+   "station_retrograde": {
+    "datetime_utc": "2026-02-26T06:48:10Z",
+    "date": "2026-02-26",
+    "sign": "Pisces",
+    "sign_num": 11,
+    "degree": 22.57,
+    "abs_degree": 352.565,
+    "local": {
+     "madrid": "2026-02-26T07:48+01:00",
+     "mexico_city": "2026-02-26T00:48-06:00",
+     "buenos_aires": "2026-02-26T03:48-03:00",
+     "bogota": "2026-02-26T01:48-05:00",
+     "santiago": "2026-02-26T03:48-03:00",
+     "new_york": "2026-02-26T01:48-05:00",
+     "los_angeles": "2026-02-25T22:48-08:00",
+     "london": "2026-02-26T06:48+00:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2026-03-20T19:32:50Z",
+    "date": "2026-03-20",
+    "sign": "Pisces",
+    "sign_num": 11,
+    "degree": 8.49,
+    "abs_degree": 338.491,
+    "local": {
+     "madrid": "2026-03-20T20:32+01:00",
+     "mexico_city": "2026-03-20T13:32-06:00",
+     "buenos_aires": "2026-03-20T16:32-03:00",
+     "bogota": "2026-03-20T14:32-05:00",
+     "santiago": "2026-03-20T16:32-03:00",
+     "new_york": "2026-03-20T15:32-04:00",
+     "los_angeles": "2026-03-20T12:32-07:00",
+     "london": "2026-03-20T19:32+00:00"
+    }
+   },
+   "signs": [
+    "Pisces"
+   ],
+   "shadow_from": "2026-02-11",
+   "shadow_to": "2026-04-09"
+  },
+  {
+   "planet": "Mercury",
+   "from": "2026-06-29",
+   "to": "2026-07-23",
+   "days": 24,
+   "station_retrograde": {
+    "datetime_utc": "2026-06-29T17:35:55Z",
+    "date": "2026-06-29",
+    "sign": "Cancer",
+    "sign_num": 3,
+    "degree": 26.26,
+    "abs_degree": 116.257,
+    "local": {
+     "madrid": "2026-06-29T19:35+02:00",
+     "mexico_city": "2026-06-29T11:35-06:00",
+     "buenos_aires": "2026-06-29T14:35-03:00",
+     "bogota": "2026-06-29T12:35-05:00",
+     "santiago": "2026-06-29T13:35-04:00",
+     "new_york": "2026-06-29T13:35-04:00",
+     "los_angeles": "2026-06-29T10:35-07:00",
+     "london": "2026-06-29T18:35+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2026-07-23T22:57:51Z",
+    "date": "2026-07-23",
+    "sign": "Cancer",
+    "sign_num": 3,
+    "degree": 16.32,
+    "abs_degree": 106.317,
+    "local": {
+     "madrid": "2026-07-24T00:57+02:00",
+     "mexico_city": "2026-07-23T16:57-06:00",
+     "buenos_aires": "2026-07-23T19:57-03:00",
+     "bogota": "2026-07-23T17:57-05:00",
+     "santiago": "2026-07-23T18:57-04:00",
+     "new_york": "2026-07-23T18:57-04:00",
+     "los_angeles": "2026-07-23T15:57-07:00",
+     "london": "2026-07-23T23:57+01:00"
+    }
+   },
+   "signs": [
+    "Cancer"
+   ],
+   "shadow_from": "2026-06-13",
+   "shadow_to": "2026-08-07"
+  },
+  {
+   "planet": "Saturn",
+   "from": "2026-07-26",
+   "to": "2026-12-10",
+   "days": 137,
+   "station_retrograde": {
+    "datetime_utc": "2026-07-26T19:56:14Z",
+    "date": "2026-07-26",
+    "sign": "Aries",
+    "sign_num": 0,
+    "degree": 14.75,
+    "abs_degree": 14.75,
+    "local": {
+     "madrid": "2026-07-26T21:56+02:00",
+     "mexico_city": "2026-07-26T13:56-06:00",
+     "buenos_aires": "2026-07-26T16:56-03:00",
+     "bogota": "2026-07-26T14:56-05:00",
+     "santiago": "2026-07-26T15:56-04:00",
+     "new_york": "2026-07-26T15:56-04:00",
+     "los_angeles": "2026-07-26T12:56-07:00",
+     "london": "2026-07-26T20:56+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2026-12-10T23:31:11Z",
+    "date": "2026-12-10",
+    "sign": "Aries",
+    "sign_num": 0,
+    "degree": 7.93,
+    "abs_degree": 7.931,
+    "local": {
+     "madrid": "2026-12-11T00:31+01:00",
+     "mexico_city": "2026-12-10T17:31-06:00",
+     "buenos_aires": "2026-12-10T20:31-03:00",
+     "bogota": "2026-12-10T18:31-05:00",
+     "santiago": "2026-12-10T20:31-03:00",
+     "new_york": "2026-12-10T18:31-05:00",
+     "los_angeles": "2026-12-10T15:31-08:00",
+     "london": "2026-12-10T23:31+00:00"
+    }
+   },
+   "signs": [
+    "Aries"
+   ],
+   "shadow_from": "2026-04-20",
+   "shadow_to": "2027-03-15"
+  },
+  {
+   "planet": "Venus",
+   "from": "2026-10-03",
+   "to": "2026-11-14",
+   "days": 42,
+   "station_retrograde": {
+    "datetime_utc": "2026-10-03T07:15:55Z",
+    "date": "2026-10-03",
+    "sign": "Scorpio",
+    "sign_num": 7,
+    "degree": 8.49,
+    "abs_degree": 218.491,
+    "local": {
+     "madrid": "2026-10-03T09:15+02:00",
+     "mexico_city": "2026-10-03T01:15-06:00",
+     "buenos_aires": "2026-10-03T04:15-03:00",
+     "bogota": "2026-10-03T02:15-05:00",
+     "santiago": "2026-10-03T04:15-03:00",
+     "new_york": "2026-10-03T03:15-04:00",
+     "los_angeles": "2026-10-03T00:15-07:00",
+     "london": "2026-10-03T08:15+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2026-11-14T00:27:28Z",
+    "date": "2026-11-14",
+    "sign": "Libra",
+    "sign_num": 6,
+    "degree": 22.86,
+    "abs_degree": 202.864,
+    "local": {
+     "madrid": "2026-11-14T01:27+01:00",
+     "mexico_city": "2026-11-13T18:27-06:00",
+     "buenos_aires": "2026-11-13T21:27-03:00",
+     "bogota": "2026-11-13T19:27-05:00",
+     "santiago": "2026-11-13T21:27-03:00",
+     "new_york": "2026-11-13T19:27-05:00",
+     "los_angeles": "2026-11-13T16:27-08:00",
+     "london": "2026-11-14T00:27+00:00"
+    }
+   },
+   "signs": [
+    "Scorpio",
+    "Libra"
+   ],
+   "shadow_from": "2026-08-31",
+   "shadow_to": "2026-12-15"
+  },
+  {
+   "planet": "Mercury",
+   "from": "2026-10-24",
+   "to": "2026-11-13",
+   "days": 20,
+   "station_retrograde": {
+    "datetime_utc": "2026-10-24T07:12:42Z",
+    "date": "2026-10-24",
+    "sign": "Scorpio",
+    "sign_num": 7,
+    "degree": 20.98,
+    "abs_degree": 230.979,
+    "local": {
+     "madrid": "2026-10-24T09:12+02:00",
+     "mexico_city": "2026-10-24T01:12-06:00",
+     "buenos_aires": "2026-10-24T04:12-03:00",
+     "bogota": "2026-10-24T02:12-05:00",
+     "santiago": "2026-10-24T04:12-03:00",
+     "new_york": "2026-10-24T03:12-04:00",
+     "los_angeles": "2026-10-24T00:12-07:00",
+     "london": "2026-10-24T08:12+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2026-11-13T15:53:52Z",
+    "date": "2026-11-13",
+    "sign": "Scorpio",
+    "sign_num": 7,
+    "degree": 5.03,
+    "abs_degree": 215.033,
+    "local": {
+     "madrid": "2026-11-13T16:53+01:00",
+     "mexico_city": "2026-11-13T09:53-06:00",
+     "buenos_aires": "2026-11-13T12:53-03:00",
+     "bogota": "2026-11-13T10:53-05:00",
+     "santiago": "2026-11-13T12:53-03:00",
+     "new_york": "2026-11-13T10:53-05:00",
+     "los_angeles": "2026-11-13T07:53-08:00",
+     "london": "2026-11-13T15:53+00:00"
+    }
+   },
+   "signs": [
+    "Scorpio"
+   ],
+   "shadow_from": "2026-10-04",
+   "shadow_to": "2026-11-30"
+  },
+  {
+   "planet": "Jupiter",
+   "from": "2026-12-13",
+   "to": "2027-04-13",
+   "days": 121,
+   "station_retrograde": {
+    "datetime_utc": "2026-12-13T00:56:36Z",
+    "date": "2026-12-13",
+    "sign": "Leo",
+    "sign_num": 4,
+    "degree": 27.02,
+    "abs_degree": 147.025,
+    "local": {
+     "madrid": "2026-12-13T01:56+01:00",
+     "mexico_city": "2026-12-12T18:56-06:00",
+     "buenos_aires": "2026-12-12T21:56-03:00",
+     "bogota": "2026-12-12T19:56-05:00",
+     "santiago": "2026-12-12T21:56-03:00",
+     "new_york": "2026-12-12T19:56-05:00",
+     "los_angeles": "2026-12-12T16:56-08:00",
+     "london": "2026-12-13T00:56+00:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2027-04-13T02:11:22Z",
+    "date": "2027-04-13",
+    "sign": "Leo",
+    "sign_num": 4,
+    "degree": 17.0,
+    "abs_degree": 136.995,
+    "local": {
+     "madrid": "2027-04-13T04:11+02:00",
+     "mexico_city": "2027-04-12T20:11-06:00",
+     "buenos_aires": "2027-04-12T23:11-03:00",
+     "bogota": "2027-04-12T21:11-05:00",
+     "santiago": "2027-04-12T22:11-04:00",
+     "new_york": "2027-04-12T22:11-04:00",
+     "los_angeles": "2027-04-12T19:11-07:00",
+     "london": "2027-04-13T03:11+01:00"
+    }
+   },
+   "signs": [
+    "Leo"
+   ],
+   "shadow_from": "2026-09-17",
+   "shadow_to": "2027-07-11"
+  },
+  {
+   "planet": "Mars",
+   "from": "2027-01-10",
+   "to": "2027-04-01",
+   "days": 81,
+   "station_retrograde": {
+    "datetime_utc": "2027-01-10T12:59:11Z",
+    "date": "2027-01-10",
+    "sign": "Virgo",
+    "sign_num": 5,
+    "degree": 10.43,
+    "abs_degree": 160.429,
+    "local": {
+     "madrid": "2027-01-10T13:59+01:00",
+     "mexico_city": "2027-01-10T06:59-06:00",
+     "buenos_aires": "2027-01-10T09:59-03:00",
+     "bogota": "2027-01-10T07:59-05:00",
+     "santiago": "2027-01-10T09:59-03:00",
+     "new_york": "2027-01-10T07:59-05:00",
+     "los_angeles": "2027-01-10T04:59-08:00",
+     "london": "2027-01-10T12:59+00:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2027-04-01T14:08:17Z",
+    "date": "2027-04-01",
+    "sign": "Leo",
+    "sign_num": 4,
+    "degree": 20.93,
+    "abs_degree": 140.927,
+    "local": {
+     "madrid": "2027-04-01T16:08+02:00",
+     "mexico_city": "2027-04-01T08:08-06:00",
+     "buenos_aires": "2027-04-01T11:08-03:00",
+     "bogota": "2027-04-01T09:08-05:00",
+     "santiago": "2027-04-01T11:08-03:00",
+     "new_york": "2027-04-01T10:08-04:00",
+     "los_angeles": "2027-04-01T07:08-07:00",
+     "london": "2027-04-01T15:08+01:00"
+    }
+   },
+   "signs": [
+    "Virgo",
+    "Leo"
+   ],
+   "shadow_from": "2026-11-05",
+   "shadow_to": "2027-06-08"
+  },
+  {
+   "planet": "Mercury",
+   "from": "2027-02-09",
+   "to": "2027-03-03",
+   "days": 22,
+   "station_retrograde": {
+    "datetime_utc": "2027-02-09T17:36:05Z",
+    "date": "2027-02-09",
+    "sign": "Pisces",
+    "sign_num": 11,
+    "degree": 5.98,
+    "abs_degree": 335.981,
+    "local": {
+     "madrid": "2027-02-09T18:36+01:00",
+     "mexico_city": "2027-02-09T11:36-06:00",
+     "buenos_aires": "2027-02-09T14:36-03:00",
+     "bogota": "2027-02-09T12:36-05:00",
+     "santiago": "2027-02-09T14:36-03:00",
+     "new_york": "2027-02-09T12:36-05:00",
+     "los_angeles": "2027-02-09T09:36-08:00",
+     "london": "2027-02-09T17:36+00:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2027-03-03T12:32:01Z",
+    "date": "2027-03-03",
+    "sign": "Aquarius",
+    "sign_num": 10,
+    "degree": 20.92,
+    "abs_degree": 320.923,
+    "local": {
+     "madrid": "2027-03-03T13:32+01:00",
+     "mexico_city": "2027-03-03T06:32-06:00",
+     "buenos_aires": "2027-03-03T09:32-03:00",
+     "bogota": "2027-03-03T07:32-05:00",
+     "santiago": "2027-03-03T09:32-03:00",
+     "new_york": "2027-03-03T07:32-05:00",
+     "los_angeles": "2027-03-03T04:32-08:00",
+     "london": "2027-03-03T12:32+00:00"
+    }
+   },
+   "signs": [
+    "Pisces",
+    "Aquarius"
+   ],
+   "shadow_from": "2027-01-25",
+   "shadow_to": "2027-03-23"
+  },
+  {
+   "planet": "Mercury",
+   "from": "2027-06-10",
+   "to": "2027-07-04",
+   "days": 24,
+   "station_retrograde": {
+    "datetime_utc": "2027-06-10T18:15:14Z",
+    "date": "2027-06-10",
+    "sign": "Cancer",
+    "sign_num": 3,
+    "degree": 6.36,
+    "abs_degree": 96.361,
+    "local": {
+     "madrid": "2027-06-10T20:15+02:00",
+     "mexico_city": "2027-06-10T12:15-06:00",
+     "buenos_aires": "2027-06-10T15:15-03:00",
+     "bogota": "2027-06-10T13:15-05:00",
+     "santiago": "2027-06-10T14:15-04:00",
+     "new_york": "2027-06-10T14:15-04:00",
+     "los_angeles": "2027-06-10T11:15-07:00",
+     "london": "2027-06-10T19:15+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2027-07-04T19:39:22Z",
+    "date": "2027-07-04",
+    "sign": "Gemini",
+    "sign_num": 2,
+    "degree": 27.47,
+    "abs_degree": 87.469,
+    "local": {
+     "madrid": "2027-07-04T21:39+02:00",
+     "mexico_city": "2027-07-04T13:39-06:00",
+     "buenos_aires": "2027-07-04T16:39-03:00",
+     "bogota": "2027-07-04T14:39-05:00",
+     "santiago": "2027-07-04T15:39-04:00",
+     "new_york": "2027-07-04T15:39-04:00",
+     "los_angeles": "2027-07-04T12:39-07:00",
+     "london": "2027-07-04T20:39+01:00"
+    }
+   },
+   "signs": [
+    "Cancer",
+    "Gemini"
+   ],
+   "shadow_from": "2027-05-26",
+   "shadow_to": "2027-07-19"
+  },
+  {
+   "planet": "Saturn",
+   "from": "2027-08-09",
+   "to": "2027-12-24",
+   "days": 137,
+   "station_retrograde": {
+    "datetime_utc": "2027-08-09T18:06:11Z",
+    "date": "2027-08-09",
+    "sign": "Aries",
+    "sign_num": 0,
+    "degree": 27.88,
+    "abs_degree": 27.88,
+    "local": {
+     "madrid": "2027-08-09T20:06+02:00",
+     "mexico_city": "2027-08-09T12:06-06:00",
+     "buenos_aires": "2027-08-09T15:06-03:00",
+     "bogota": "2027-08-09T13:06-05:00",
+     "santiago": "2027-08-09T14:06-04:00",
+     "new_york": "2027-08-09T14:06-04:00",
+     "los_angeles": "2027-08-09T11:06-07:00",
+     "london": "2027-08-09T19:06+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2027-12-24T02:46:29Z",
+    "date": "2027-12-24",
+    "sign": "Aries",
+    "sign_num": 0,
+    "degree": 21.02,
+    "abs_degree": 21.021,
+    "local": {
+     "madrid": "2027-12-24T03:46+01:00",
+     "mexico_city": "2027-12-23T20:46-06:00",
+     "buenos_aires": "2027-12-23T23:46-03:00",
+     "bogota": "2027-12-23T21:46-05:00",
+     "santiago": "2027-12-23T23:46-03:00",
+     "new_york": "2027-12-23T21:46-05:00",
+     "los_angeles": "2027-12-23T18:46-08:00",
+     "london": "2027-12-24T02:46+00:00"
+    }
+   },
+   "signs": [
+    "Aries"
+   ],
+   "shadow_from": "2027-05-04",
+   "shadow_to": "2028-03-27"
+  },
+  {
+   "planet": "Mercury",
+   "from": "2027-10-07",
+   "to": "2027-10-28",
+   "days": 21,
+   "station_retrograde": {
+    "datetime_utc": "2027-10-07T14:37:04Z",
+    "date": "2027-10-07",
+    "sign": "Scorpio",
+    "sign_num": 7,
+    "degree": 4.93,
+    "abs_degree": 214.928,
+    "local": {
+     "madrid": "2027-10-07T16:37+02:00",
+     "mexico_city": "2027-10-07T08:37-06:00",
+     "buenos_aires": "2027-10-07T11:37-03:00",
+     "bogota": "2027-10-07T09:37-05:00",
+     "santiago": "2027-10-07T11:37-03:00",
+     "new_york": "2027-10-07T10:37-04:00",
+     "los_angeles": "2027-10-07T07:37-07:00",
+     "london": "2027-10-07T15:37+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2027-10-28T14:10:38Z",
+    "date": "2027-10-28",
+    "sign": "Libra",
+    "sign_num": 6,
+    "degree": 19.31,
+    "abs_degree": 199.312,
+    "local": {
+     "madrid": "2027-10-28T16:10+02:00",
+     "mexico_city": "2027-10-28T08:10-06:00",
+     "buenos_aires": "2027-10-28T11:10-03:00",
+     "bogota": "2027-10-28T09:10-05:00",
+     "santiago": "2027-10-28T11:10-03:00",
+     "new_york": "2027-10-28T10:10-04:00",
+     "los_angeles": "2027-10-28T07:10-07:00",
+     "london": "2027-10-28T15:10+01:00"
+    }
+   },
+   "signs": [
+    "Scorpio",
+    "Libra"
+   ],
+   "shadow_from": "2027-09-17",
+   "shadow_to": "2027-11-13"
+  },
+  {
+   "planet": "Jupiter",
+   "from": "2028-01-12",
+   "to": "2028-05-13",
+   "days": 122,
+   "station_retrograde": {
+    "datetime_utc": "2028-01-12T08:53:27Z",
+    "date": "2028-01-12",
+    "sign": "Virgo",
+    "sign_num": 5,
+    "degree": 27.51,
+    "abs_degree": 177.512,
+    "local": {
+     "madrid": "2028-01-12T09:53+01:00",
+     "mexico_city": "2028-01-12T02:53-06:00",
+     "buenos_aires": "2028-01-12T05:53-03:00",
+     "bogota": "2028-01-12T03:53-05:00",
+     "santiago": "2028-01-12T05:53-03:00",
+     "new_york": "2028-01-12T03:53-05:00",
+     "los_angeles": "2028-01-12T00:53-08:00",
+     "london": "2028-01-12T08:53+00:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2028-05-13T20:00:15Z",
+    "date": "2028-05-13",
+    "sign": "Virgo",
+    "sign_num": 5,
+    "degree": 17.54,
+    "abs_degree": 167.54,
+    "local": {
+     "madrid": "2028-05-13T22:00+02:00",
+     "mexico_city": "2028-05-13T14:00-06:00",
+     "buenos_aires": "2028-05-13T17:00-03:00",
+     "bogota": "2028-05-13T15:00-05:00",
+     "santiago": "2028-05-13T16:00-04:00",
+     "new_york": "2028-05-13T16:00-04:00",
+     "los_angeles": "2028-05-13T13:00-07:00",
+     "london": "2028-05-13T21:00+01:00"
+    }
+   },
+   "signs": [
+    "Virgo"
+   ],
+   "shadow_from": "2027-10-17",
+   "shadow_to": "2028-08-11"
+  },
+  {
+   "planet": "Mercury",
+   "from": "2028-01-24",
+   "to": "2028-02-14",
+   "days": 21,
+   "station_retrograde": {
+    "datetime_utc": "2028-01-24T11:02:26Z",
+    "date": "2028-01-24",
+    "sign": "Aquarius",
+    "sign_num": 10,
+    "degree": 19.7,
+    "abs_degree": 319.698,
+    "local": {
+     "madrid": "2028-01-24T12:02+01:00",
+     "mexico_city": "2028-01-24T05:02-06:00",
+     "buenos_aires": "2028-01-24T08:02-03:00",
+     "bogota": "2028-01-24T06:02-05:00",
+     "santiago": "2028-01-24T08:02-03:00",
+     "new_york": "2028-01-24T06:02-05:00",
+     "los_angeles": "2028-01-24T03:02-08:00",
+     "london": "2028-01-24T11:02+00:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2028-02-14T12:37:48Z",
+    "date": "2028-02-14",
+    "sign": "Aquarius",
+    "sign_num": 10,
+    "degree": 3.99,
+    "abs_degree": 303.985,
+    "local": {
+     "madrid": "2028-02-14T13:37+01:00",
+     "mexico_city": "2028-02-14T06:37-06:00",
+     "buenos_aires": "2028-02-14T09:37-03:00",
+     "bogota": "2028-02-14T07:37-05:00",
+     "santiago": "2028-02-14T09:37-03:00",
+     "new_york": "2028-02-14T07:37-05:00",
+     "los_angeles": "2028-02-14T04:37-08:00",
+     "london": "2028-02-14T12:37+00:00"
+    }
+   },
+   "signs": [
+    "Aquarius"
+   ],
+   "shadow_from": "2028-01-08",
+   "shadow_to": "2028-03-05"
+  },
+  {
+   "planet": "Venus",
+   "from": "2028-05-10",
+   "to": "2028-06-22",
+   "days": 43,
+   "station_retrograde": {
+    "datetime_utc": "2028-05-10T23:02:47Z",
+    "date": "2028-05-10",
+    "sign": "Gemini",
+    "sign_num": 2,
+    "degree": 19.69,
+    "abs_degree": 79.687,
+    "local": {
+     "madrid": "2028-05-11T01:02+02:00",
+     "mexico_city": "2028-05-10T17:02-06:00",
+     "buenos_aires": "2028-05-10T20:02-03:00",
+     "bogota": "2028-05-10T18:02-05:00",
+     "santiago": "2028-05-10T19:02-04:00",
+     "new_york": "2028-05-10T19:02-04:00",
+     "los_angeles": "2028-05-10T16:02-07:00",
+     "london": "2028-05-11T00:02+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2028-06-22T22:12:40Z",
+    "date": "2028-06-22",
+    "sign": "Gemini",
+    "sign_num": 2,
+    "degree": 3.18,
+    "abs_degree": 63.18,
+    "local": {
+     "madrid": "2028-06-23T00:12+02:00",
+     "mexico_city": "2028-06-22T16:12-06:00",
+     "buenos_aires": "2028-06-22T19:12-03:00",
+     "bogota": "2028-06-22T17:12-05:00",
+     "santiago": "2028-06-22T18:12-04:00",
+     "new_york": "2028-06-22T18:12-04:00",
+     "los_angeles": "2028-06-22T15:12-07:00",
+     "london": "2028-06-22T23:12+01:00"
+    }
+   },
+   "signs": [
+    "Gemini"
+   ],
+   "shadow_from": "2028-04-07",
+   "shadow_to": "2028-07-26"
+  },
+  {
+   "planet": "Mercury",
+   "from": "2028-05-21",
+   "to": "2028-06-14",
+   "days": 24,
+   "station_retrograde": {
+    "datetime_utc": "2028-05-21T08:42:59Z",
+    "date": "2028-05-21",
+    "sign": "Gemini",
+    "sign_num": 2,
+    "degree": 16.31,
+    "abs_degree": 76.315,
+    "local": {
+     "madrid": "2028-05-21T10:42+02:00",
+     "mexico_city": "2028-05-21T02:42-06:00",
+     "buenos_aires": "2028-05-21T05:42-03:00",
+     "bogota": "2028-05-21T03:42-05:00",
+     "santiago": "2028-05-21T04:42-04:00",
+     "new_york": "2028-05-21T04:42-04:00",
+     "los_angeles": "2028-05-21T01:42-07:00",
+     "london": "2028-05-21T09:42+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2028-06-14T06:05:59Z",
+    "date": "2028-06-14",
+    "sign": "Gemini",
+    "sign_num": 2,
+    "degree": 7.76,
+    "abs_degree": 67.757,
+    "local": {
+     "madrid": "2028-06-14T08:05+02:00",
+     "mexico_city": "2028-06-14T00:05-06:00",
+     "buenos_aires": "2028-06-14T03:05-03:00",
+     "bogota": "2028-06-14T01:05-05:00",
+     "santiago": "2028-06-14T02:05-04:00",
+     "new_york": "2028-06-14T02:05-04:00",
+     "los_angeles": "2028-06-13T23:05-07:00",
+     "london": "2028-06-14T07:05+01:00"
+    }
+   },
+   "signs": [
+    "Gemini"
+   ],
+   "shadow_from": "2028-05-06",
+   "shadow_to": "2028-06-29"
+  },
+  {
+   "planet": "Saturn",
+   "from": "2028-08-22",
+   "to": "2029-01-05",
+   "days": 136,
+   "station_retrograde": {
+    "datetime_utc": "2028-08-22T22:17:10Z",
+    "date": "2028-08-22",
+    "sign": "Taurus",
+    "sign_num": 1,
+    "degree": 11.31,
+    "abs_degree": 41.314,
+    "local": {
+     "madrid": "2028-08-23T00:17+02:00",
+     "mexico_city": "2028-08-22T16:17-06:00",
+     "buenos_aires": "2028-08-22T19:17-03:00",
+     "bogota": "2028-08-22T17:17-05:00",
+     "santiago": "2028-08-22T18:17-04:00",
+     "new_york": "2028-08-22T18:17-04:00",
+     "los_angeles": "2028-08-22T15:17-07:00",
+     "london": "2028-08-22T23:17+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2029-01-05T12:39:00Z",
+    "date": "2029-01-05",
+    "sign": "Taurus",
+    "sign_num": 1,
+    "degree": 4.42,
+    "abs_degree": 34.417,
+    "local": {
+     "madrid": "2029-01-05T13:39+01:00",
+     "mexico_city": "2029-01-05T06:39-06:00",
+     "buenos_aires": "2029-01-05T09:39-03:00",
+     "bogota": "2029-01-05T07:39-05:00",
+     "santiago": "2029-01-05T09:39-03:00",
+     "new_york": "2029-01-05T07:39-05:00",
+     "los_angeles": "2029-01-05T04:39-08:00",
+     "london": "2029-01-05T12:39+00:00"
+    }
+   },
+   "signs": [
+    "Taurus"
+   ],
+   "shadow_from": "2028-05-18",
+   "shadow_to": "2029-04-09"
+  },
+  {
+   "planet": "Mercury",
+   "from": "2028-09-19",
+   "to": "2028-10-11",
+   "days": 22,
+   "station_retrograde": {
+    "datetime_utc": "2028-09-19T16:33:49Z",
+    "date": "2028-09-19",
+    "sign": "Libra",
+    "sign_num": 6,
+    "degree": 18.59,
+    "abs_degree": 198.594,
+    "local": {
+     "madrid": "2028-09-19T18:33+02:00",
+     "mexico_city": "2028-09-19T10:33-06:00",
+     "buenos_aires": "2028-09-19T13:33-03:00",
+     "bogota": "2028-09-19T11:33-05:00",
+     "santiago": "2028-09-19T13:33-03:00",
+     "new_york": "2028-09-19T12:33-04:00",
+     "los_angeles": "2028-09-19T09:33-07:00",
+     "london": "2028-09-19T17:33+01:00"
+    }
+   },
+   "station_direct": {
+    "datetime_utc": "2028-10-11T10:27:31Z",
+    "date": "2028-10-11",
+    "sign": "Libra",
+    "sign_num": 6,
+    "degree": 3.48,
+    "abs_degree": 183.481,
+    "local": {
+     "madrid": "2028-10-11T12:27+02:00",
+     "mexico_city": "2028-10-11T04:27-06:00",
+     "buenos_aires": "2028-10-11T07:27-03:00",
+     "bogota": "2028-10-11T05:27-05:00",
+     "santiago": "2028-10-11T07:27-03:00",
+     "new_york": "2028-10-11T06:27-04:00",
+     "los_angeles": "2028-10-11T03:27-07:00",
+     "london": "2028-10-11T11:27+01:00"
+    }
+   },
+   "signs": [
+    "Libra"
+   ],
+   "shadow_from": "2028-08-30",
+   "shadow_to": "2028-10-26"
+  }
+ ]
+}

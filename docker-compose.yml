@@ -1,0 +1,25 @@
+# Development: docker compose up --build
+services:
+  calc:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: astroletra-calc:dev
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      CALC_KEY: ${CALC_KEY:-dev-key}
+      PDF_ALLOWED_HOSTS: ${PDF_ALLOWED_HOSTS:-}
+    ports:
+      - "${CALC_PORT:-8000}:8000"
+    volumes:
+      # Optional tarot scans (<card_id>.png).
+      - ./assets/tarot:/app/assets/tarot:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/v1/health', timeout=4)"]
+      interval: 30s
+      timeout: 5s
+      start_period: 30s
+      retries: 3

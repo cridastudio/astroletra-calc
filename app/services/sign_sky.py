@@ -16,7 +16,9 @@ Model ("solar sign" astrology, as printed horoscopes do it):
   bisection); for the day endpoint a planet other than the Moon that stays within 1°
   without perfecting is reported with ``exact: false`` and its smallest orb.
 
-Every instant is computed in UTC and returned in the requested IANA zone.
+Every instant is computed in UTC and returned in the requested IANA zone. The short
+sentences (``label`` and ``highlights``) and ``city`` come from the phrases module of the
+requested language (``es_phrases`` or ``en_phrases``); the data is the same in both.
 """
 
 from __future__ import annotations
@@ -24,13 +26,14 @@ from __future__ import annotations
 from datetime import date as date_type
 from datetime import datetime, timedelta
 from functools import lru_cache
+from types import ModuleType
 from typing import Any, Callable
 from zoneinfo import ZoneInfo
 
 from kerykeion import LunationFinderFactory, RetrogradeStationFactory, SignIngressFactory
 from kerykeion.ephemeris_backend.backend import ephemeris_session
 
-from app.services import es_phrases as es
+from app.services import en_phrases, es_phrases
 from app.services.astro import SIGN_NAMES, TEN_PLANETS, moon_phase_of, subject_from_utc
 from app.services.sky import (
     _STATION_MARGIN_DAYS,
@@ -46,6 +49,9 @@ from app.services.sky import (
     _signed_diff,
     _whole_sign_aspect,
 )
+
+# Phrases module of each language (same public functions in both).
+PHRASES: dict[str, ModuleType] = {"es": es_phrases, "en": en_phrases}
 
 CLASSICAL_RULER: list[str] = [
     "Mars", "Venus", "Mercury", "Moon", "Sun", "Mercury",
@@ -249,7 +255,7 @@ def _event(kind: str, utc: datetime, tz: str, label: str, **fields: Any) -> dict
     return entry
 
 
-def _ingress_events(start: datetime, end: datetime, tz: str, sign_num: int, *, with_date: bool) -> list[dict[str, Any]]:
+def _ingress_events(start: datetime, end: datetime, tz: str, sign_num: int, ph: ModuleType, *, with_date: bool) -> list[dict[str, Any]]:
     """Sign ingresses of the ten planets (the Moon too) between two instants."""
     found = SignIngressFactory.from_iso_range(
         (start.astimezone(UTC) - timedelta(days=1)).date().isoformat(),
@@ -263,13 +269,14 @@ def _ingress_events(start: datetime, end: datetime, tz: str, sign_num: int, *, w
             continue
         new_sign, old_sign = int(ing.sign_num), int(ing.from_sign_num)
         house, from_house = house_of(new_sign, sign_num), house_of(old_sign, sign_num)
-        moment = es.when_es(utc.astimezone(ZoneInfo(tz)), tz, with_date=with_date)
+        local = utc.astimezone(ZoneInfo(tz))
         if ing.planet == "Moon":
-            label = f"La Luna entra en {es.sign(SIGN_NAMES[new_sign])}, {es.house(house)}, {moment}."
+            label = ph.moon_ingress(SIGN_NAMES[new_sign], house, local, tz, with_date=with_date)
             kind = "moon_ingress"
         else:
-            retro = " retrógrado" if ing.retrograde else ""
-            label = f"{es.planet(ing.planet)}{retro} entra en {es.sign(SIGN_NAMES[new_sign])}, {es.house(house)}, {moment}."
+            label = ph.planet_ingress(
+                ing.planet, SIGN_NAMES[new_sign], house, local, tz, retrograde=bool(ing.retrograde), with_date=with_date,
+            )
             kind = "ingress"
         out.append(_event(
             kind, utc, tz, label,
@@ -280,7 +287,7 @@ def _ingress_events(start: datetime, end: datetime, tz: str, sign_num: int, *, w
     return out
 
 
-def _lunation_events(start: datetime, end: datetime, tz: str, sign_num: int, *, with_date: bool) -> list[dict[str, Any]]:
+def _lunation_events(start: datetime, end: datetime, tz: str, sign_num: int, ph: ModuleType, *, with_date: bool) -> list[dict[str, Any]]:
     found = LunationFinderFactory.from_iso_range(
         (start.astimezone(UTC) - timedelta(days=1)).date().isoformat(),
         (end.astimezone(UTC) + timedelta(days=2)).date().isoformat(),
@@ -294,24 +301,25 @@ def _lunation_events(start: datetime, end: datetime, tz: str, sign_num: int, *, 
         pos = _sign_fields(float(lun.moon.abs_pos))
         house = house_of(pos["sign_num"], sign_num)
         eclipse = _eclipse_near(utc, lun.phase)
-        moment = es.when_es(utc.astimezone(ZoneInfo(tz)), tz, with_date=with_date)
-        where = f"a {es.degree(pos['degree'])} de {es.sign(pos['sign'])}, en {es.house(house)}"
+        label = ph.lunation(
+            lun.phase, pos["degree"], pos["sign"], house, utc.astimezone(ZoneInfo(tz)), tz, with_date=with_date,
+            eclipse_type=eclipse["type"] if eclipse else None, eclipse_kind=eclipse["kind"] if eclipse else None,
+        )
         if eclipse:
-            kind_es = {"total": "total", "annular": "anular", "partial": "parcial", "penumbral": "penumbral", "hybrid": "híbrido"}.get(eclipse["kind"], eclipse["kind"])
-            name = f"Eclipse {'solar' if eclipse['type'] == 'solar' else 'lunar'} {kind_es}"
             ecl = dict(eclipse)
             ecl.update({k: v for k, v in _instant(_parse_utc(eclipse["datetime_utc"]), tz).items() if k != "datetime_utc"})
         else:
-            name = "Luna nueva" if lun.phase == "new" else "Luna llena"
             ecl = None
         out.append(_event(
-            "eclipse" if eclipse else "lunation", utc, tz, f"{name} {where}, {moment}.",
+            "eclipse" if eclipse else "lunation", utc, tz, label,
             planet="Moon", phase=lun.phase, house=house, eclipse=ecl, local_times=_city_times(utc), **pos,
         ))
     return out
 
 
-def _retro_periods(start: datetime, end: datetime, tz: str, sign_num: int, hits_points: set[str], *, with_date: bool) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
+def _retro_periods(
+    start: datetime, end: datetime, tz: str, sign_num: int, hits_points: set[str], ph: ModuleType, *, with_date: bool,
+) -> tuple[list[dict[str, Any]], list[dict[str, Any]]]:
     """Retrograde periods (Mercury..Pluto) that overlap ``start``..``end`` and the station
     events inside it."""
     found = RetrogradeStationFactory.from_iso_range(
@@ -353,9 +361,9 @@ def _retro_periods(start: datetime, end: datetime, tz: str, sign_num: int, hits_
                 if not (start <= utc < end):
                     continue
                 house = house_of(pos["sign_num"], sign_num)
-                moment = es.when_es(utc.astimezone(ZoneInfo(tz)), tz, with_date=with_date)
-                word = "retrógrado" if kind_station == "retrograde" else "directo"
-                label = f"{es.planet(planet)} se estaciona {word} a {es.degree(pos['degree'])} de {es.sign(pos['sign'])}, en {es.house(house)}, {moment}."
+                label = ph.station(
+                    planet, kind_station, pos["degree"], pos["sign"], house, utc.astimezone(ZoneInfo(tz)), tz, with_date=with_date,
+                )
                 stations.append(_event(
                     "station", utc, tz, label,
                     planet=planet, station=kind_station, house=house, affects=bool(reasons), **pos,
@@ -370,6 +378,7 @@ def _aspect_entries(
     times: list[datetime],
     lons: dict[str, list[float]],
     tz: str,
+    ph: ModuleType,
     *,
     near_for: set[str],
     with_date: bool,
@@ -396,7 +405,7 @@ def _aspect_entries(
             if not (h["point"] == "30" and any(o["point"] == "0" and same_moment(o, h) for o in planet_hits))
         ]
         for h in keep:
-            to_points.append(_aspect_entry("aspect_to_sign", planet, h, sign_num, tz, with_date=with_date, fallback_at=fallback_at))
+            to_points.append(_aspect_entry("aspect_to_sign", planet, h, sign_num, tz, ph, with_date=with_date, fallback_at=fallback_at))
 
     to_ruler: list[dict[str, Any]] = []
     if ruler in lons:
@@ -405,7 +414,7 @@ def _aspect_entries(
                 continue
             near = planet in near_for and ruler in near_for
             for h in _scan(planet, times, lons[planet], lons[ruler], lambda t: _longitude(ruler, t)[0], near=near):
-                to_ruler.append(_aspect_entry("aspect_to_ruler", planet, h, sign_num, tz, with_date=with_date, fallback_at=fallback_at))
+                to_ruler.append(_aspect_entry("aspect_to_ruler", planet, h, sign_num, tz, ph, with_date=with_date, fallback_at=fallback_at))
 
     def order(e: dict[str, Any]) -> tuple[bool, str, float]:
         return (not e["exact"], e["datetime_utc"] or "", e["orb"])
@@ -413,32 +422,31 @@ def _aspect_entries(
     return sorted(to_points, key=order), sorted(to_ruler, key=order)
 
 
-def _aspect_entry(kind: str, planet: str, hit: dict[str, Any], sign_num: int, tz: str, *, with_date: bool, fallback_at: datetime) -> dict[str, Any]:
+def _aspect_entry(
+    kind: str, planet: str, hit: dict[str, Any], sign_num: int, tz: str, ph: ModuleType, *, with_date: bool, fallback_at: datetime,
+) -> dict[str, Any]:
     ruler = CLASSICAL_RULER[sign_num]
     at = hit["at"]
     pos = _position(planet, at or fallback_at, sign_num)
     entry: dict[str, Any] = {"kind": kind, "planet": planet}
     if kind == "aspect_to_sign":
         entry.update({"point": hit["point"], "point_abs_degree": hit["point_abs_degree"]})
-        target = es.point(hit["point"])
+        target = ph.point(hit["point"])
     else:
         entry["ruler"] = ruler
-        target = f"{es.planet(ruler, capital=False)}, tu regente"
+        target = ph.ruler(ruler)
     entry["covered_by"] = None
     entry.update({"type": hit["type"], "degrees": hit["degrees"], "exact": hit["exact"], "orb": hit["orb"], "applying": hit["applying"]})
     entry["position"] = pos
     entry["house"] = pos["house"]
-    subject = es.planet(planet)
     if at is not None:
         entry.update(_instant(at, tz))
-        moment = es.when_es(at.astimezone(ZoneInfo(tz)), tz, with_date=with_date)
-        exact_word = "exacto" if hit["type"] in ("sextile", "trine") else "exacta"
-        comma = "," if kind == "aspect_to_ruler" else ""
-        entry["label"] = f"{subject} forma {es.ASPECT_ES[hit['type']]} {exact_word} con {target}{comma} {moment}."
+        entry["label"] = ph.aspect_exact(
+            planet, hit["type"], target, at.astimezone(ZoneInfo(tz)), tz, with_date=with_date, to_ruler=kind == "aspect_to_ruler",
+        )
     else:
         entry.update({"datetime_utc": None, "datetime_local": None, "date_local": None, "time_local": None})
-        minutes = round(hit["orb"] * 60)
-        entry["label"] = f"{subject} mantiene {es.ASPECT_ES[hit['type']]} con {target}, a {minutes}' del exacto."
+        entry["label"] = ph.aspect_near(planet, hit["type"], target, round(hit["orb"] * 60))
     entry["score"] = score_event(entry)
     return entry
 
@@ -463,7 +471,9 @@ def _mark_covered(aspects: list[dict[str, Any]], ingresses: list[dict[str, Any]]
                 a["covered_by"] = "ingress"
 
 
-def _sky_aspects(start: datetime, end: datetime, tz: str, sign_num: int, noon_planets: dict[str, dict[str, Any]]) -> list[dict[str, Any]]:
+def _sky_aspects(
+    start: datetime, end: datetime, tz: str, sign_num: int, noon_planets: dict[str, dict[str, Any]], ph: ModuleType,
+) -> list[dict[str, Any]]:
     """Exact aspects between two planets during the day (as in ``/v1/today``), placed in the
     sign's solar houses. Aspects with the ruler are left out (they are ``aspects_to_ruler``),
     and so are Sun-Moon conjunctions and oppositions (lunations)."""
@@ -476,12 +486,7 @@ def _sky_aspects(start: datetime, end: datetime, tz: str, sign_num: int, noon_pl
             continue
         utc = datetime.fromisoformat(a["datetime_local"]).astimezone(UTC)
         h1, h2 = noon_planets[a["p1"]]["house"], noon_planets[a["p2"]]["house"]
-        exact_word = "exacto" if a["type"] in ("sextile", "trine") else "exacta"
-        moment = es.when_es(utc.astimezone(ZoneInfo(tz)), tz, with_date=False)
-        label = (
-            f"{es.planet(a['p1'])} ({es.house(h1)}) forma {es.ASPECT_ES[a['type']]} {exact_word} "
-            f"con {es.planet(a['p2'], capital=False)} ({es.house(h2)}) {moment}."
-        )
+        label = ph.sky_aspect(a["p1"], h1, a["type"], a["p2"], h2, utc.astimezone(ZoneInfo(tz)), tz)
         out.append(_event("sky_aspect", utc, tz, label, p1=a["p1"], p2=a["p2"], type=a["type"], degrees=a["degrees"], houses=[h1, h2]))
     return out
 
@@ -510,24 +515,19 @@ def _pick_featured(events: list[dict[str, Any]], count: int) -> list[dict[str, A
     return out
 
 
-def _retro_sentence(periods: list[dict[str, Any]], *, ongoing_on: date_type | None = None) -> str | None:
-    parts = []
+def _retro_sentence(periods: list[dict[str, Any]], ph: ModuleType, *, ongoing_on: date_type | None = None) -> str | None:
+    """Sentence for the first two retrograde periods that affect the sign (ongoing on
+    ``ongoing_on`` when given)."""
+    chosen = []
     for p in periods:
         if not p["affects"]:
             continue
         if ongoing_on is not None and not (p["since"] <= ongoing_on.isoformat() <= p["until"]):
             continue
-        sign_txt = " y ".join(es.sign(s) for s in p["signs"])
-        houses = " y ".join(str(h) for h in p["houses"])
-        house_txt = f"tu casa {houses}" if len(p["houses"]) == 1 else f"tus casas {houses}"
-        until = es.date_es(date_type.fromisoformat(p["until"]))
-        since = es.date_es(date_type.fromisoformat(p["since"]))
-        parts.append(f"{es.planet(p['planet'])} en {sign_txt} ({house_txt}), del {since} al {until}")
-        if len(parts) == 2:
+        chosen.append(p)
+        if len(chosen) == 2:
             break
-    if not parts:
-        return None
-    return f"Retrógrado{'s' if len(parts) > 1 else ''} que te afecta{'n' if len(parts) > 1 else ''}: {'; '.join(parts)}."
+    return ph.retrogrades(chosen)
 
 
 def _unique(items: list[str | None], limit: int) -> list[str]:
@@ -573,8 +573,10 @@ def _sign_points(sign_num: int) -> list[dict[str, Any]]:
 # --------------------------------------------------------------------------- day
 
 
-def sign_day(sign_num: int, day: date_type, tz: str) -> dict[str, Any]:
-    """Everything a daily horoscope of ``sign_num`` needs for one civil day in ``tz``."""
+def sign_day(sign_num: int, day: date_type, tz: str, lang: str = "es") -> dict[str, Any]:
+    """Everything a daily horoscope of ``sign_num`` needs for one civil day in ``tz``;
+    ``lang`` (``es`` or ``en``) is the language of ``label``, ``highlights`` and ``city``."""
+    ph = PHRASES[lang]
     start = _local_midnight(day, tz).astimezone(UTC)
     end = _local_midnight(day + timedelta(days=1), tz).astimezone(UTC)
     noon = start + (end - start) / 2
@@ -585,7 +587,7 @@ def sign_day(sign_num: int, day: date_type, tz: str) -> dict[str, Any]:
         # Moon and planets sampled every hour: the Moon moves ~0.5° per hour.
         planets = [{"name": p, **_position(p, noon, sign_num)} for p in TEN_PLANETS]
         aspects_to_sign, aspects_to_ruler = _aspect_entries(
-            sign_num, TEN_PLANETS, times, lons, tz,
+            sign_num, TEN_PLANETS, times, lons, tz, ph,
             near_for={p for p in TEN_PLANETS if p != "Moon"}, with_date=False, fallback_at=noon,
         )
         moon_00 = _position("Moon", start, sign_num)
@@ -625,18 +627,18 @@ def sign_day(sign_num: int, day: date_type, tz: str) -> dict[str, Any]:
         "next_sign_change": next_change,
     }
 
-    ingress_events = _ingress_events(start, end, tz, sign_num, with_date=False)
+    ingress_events = _ingress_events(start, end, tz, sign_num, ph, with_date=False)
     _mark_covered(aspects_to_sign + aspects_to_ruler, ingress_events)
     hits_points = {a["planet"] for a in aspects_to_sign if a["covered_by"] is None}
-    periods, stations = _retro_periods(start, end, tz, sign_num, hits_points, with_date=False)
+    periods, stations = _retro_periods(start, end, tz, sign_num, hits_points, ph, with_date=False)
     events = (
         ingress_events
         + stations
-        + _lunation_events(start, end, tz, sign_num, with_date=False)
+        + _lunation_events(start, end, tz, sign_num, ph, with_date=False)
         + [a for a in aspects_to_sign + aspects_to_ruler if a["exact"] and a["covered_by"] is None]
     )
     events.sort(key=lambda e: e["datetime_utc"])
-    sky_aspects = _sky_aspects(start, end, tz, sign_num, {p["name"]: p for p in planets})
+    sky_aspects = _sky_aspects(start, end, tz, sign_num, {p["name"]: p for p in planets}, ph)
     top = _pick_featured(events, 3)
     if not top:
         # No event of the sign today: the exact aspects of the day's sky, in its houses.
@@ -650,11 +652,10 @@ def sign_day(sign_num: int, day: date_type, tz: str) -> dict[str, Any]:
     elif next_change is not None:
         # No dated event today: the next Moon ingress is the closest dated fact.
         utc = _parse_utc(next_change["datetime_utc"])
-        moment = es.when_es(utc.astimezone(ZoneInfo(tz)), tz, with_date=True)
         featured = {
             "kind": "moon_ingress", "planet": "Moon", "sign": next_change["sign"], "sign_num": next_change["sign_num"],
             "house": next_change["house"], **_instant(utc, tz), "local_times": next_change["local_times"],
-            "label": f"La Luna entra en {es.sign(next_change['sign'])}, {es.house(next_change['house'])}, {moment}.",
+            "label": ph.moon_ingress(next_change["sign"], next_change["house"], utc.astimezone(ZoneInfo(tz)), tz, with_date=True),
             "in_period": False,
         }
         featured["score"] = score_event(featured)
@@ -663,33 +664,28 @@ def sign_day(sign_num: int, day: date_type, tz: str) -> dict[str, Any]:
     phase = moon["phase"] or {}
     if changes_today and next_change:
         when = _parse_utc(next_change["datetime_utc"]).astimezone(ZoneInfo(tz))
-        moon_sentence = (
-            f"La Luna pasa de {es.sign(next_change['from_sign'])} ({es.house(next_change['from_house'])}) "
-            f"a {es.sign(next_change['sign'])} ({es.house(next_change['house'])}) {es.time_es(when, tz)}."
+        moon_sentence = ph.moon_changes_sign(
+            next_change["from_sign"], next_change["from_house"], next_change["sign"], next_change["house"], when, tz,
         )
     elif next_change:
         when = _parse_utc(next_change["datetime_utc"]).astimezone(ZoneInfo(tz))
-        moon_sentence = (
-            f"La Luna está en {es.sign(moon_00['sign'])} ({es.house(moon_00['house'])}) todo el día "
-            f"y entra en {es.sign(next_change['sign'])} ({es.house(next_change['house'])}) {es.when_es(when, tz, with_date=True)}."
-        )
+        moon_sentence = ph.moon_all_day(moon_00["sign"], moon_00["house"], next_change["sign"], next_change["house"], when, tz)
     else:  # pragma: no cover - the Moon changes sign every 2.5 days
-        moon_sentence = f"La Luna está en {es.sign(moon_noon['sign'])} ({es.house(moon_noon['house'])})."
+        moon_sentence = ph.moon_in_sign(moon_noon["sign"], moon_noon["house"])
     sun = planets[0]
-    sun_sentence = f"El Sol está a {es.degree(sun['degree'])} de {es.sign(sun['sign'])}, en {es.house(sun['house'])}."
+    sun_sentence = ph.sun_position(sun["degree"], sun["sign"], sun["house"])
     phase_sentence = None
     if phase.get("illumination") is not None:
-        stage = "creciente" if phase.get("stage") == "waxing" else "menguante"
-        phase_sentence = f"Luna {stage}, con el {round(phase['illumination'] * 100)} % del disco iluminado."
+        phase_sentence = ph.moon_phase(phase.get("stage"), phase["illumination"], phase.get("name"))
     others = [e["label"] for e in top if e["kind"] != "moon_ingress"]
-    highlights = _unique([moon_sentence, *others[:2], _retro_sentence(periods, ongoing_on=day), sun_sentence, phase_sentence], 5)
+    highlights = _unique([moon_sentence, *others[:2], _retro_sentence(periods, ph, ongoing_on=day), sun_sentence, phase_sentence], 5)
 
     return {
         "sign": sign,
         "sign_num": sign_num,
         "date": day.isoformat(),
         "tz": tz,
-        "city": es.city_of(tz),
+        "city": ph.city_of(tz),
         "computed_at_local": noon.astimezone(ZoneInfo(tz)).isoformat(timespec="minutes"),
         "orb": ORB,
         "ruler": ruler,
@@ -713,8 +709,9 @@ def sign_day(sign_num: int, day: date_type, tz: str) -> dict[str, Any]:
 # --------------------------------------------------------------------------- week and month
 
 
-def sign_period(sign_num: int, first: date_type, last: date_type, tz: str, *, period: str) -> dict[str, Any]:
-    """Dated events between the local midnights of ``first`` and ``last + 1`` for one sign.
+def sign_period(sign_num: int, first: date_type, last: date_type, tz: str, *, period: str, lang: str = "es") -> dict[str, Any]:
+    """Dated events between the local midnights of ``first`` and ``last + 1`` for one sign;
+    ``lang`` (``es`` or ``en``) is the language of ``label``, ``highlights`` and ``city``.
 
     The Moon is left out of the aspect scan (it would add some 30 aspects a month); its
     sign changes come as ``moon_ingresses`` and ``moon_by_day``, and the lunations as events.
@@ -722,6 +719,7 @@ def sign_period(sign_num: int, first: date_type, last: date_type, tz: str, *, pe
     """
     start = _local_midnight(first, tz).astimezone(UTC)
     end = _local_midnight(last + timedelta(days=1), tz).astimezone(UTC)
+    ph = PHRASES[lang]
     movers = [p for p in TEN_PLANETS if p != "Moon"]
     days = [first + timedelta(days=i) for i in range((last - first).days + 1)]
 
@@ -733,7 +731,7 @@ def sign_period(sign_num: int, first: date_type, last: date_type, tz: str, *, pe
     with ephemeris_session():
         times, lons = _sample(movers, start, end, _SAMPLE_STEP_PERIOD)
         aspects_to_sign, aspects_to_ruler = _aspect_entries(
-            sign_num, movers, times, lons, tz, near_for=set(), with_date=True, fallback_at=start,
+            sign_num, movers, times, lons, tz, ph, near_for=set(), with_date=True, fallback_at=start,
         )
         planets_start = [{"name": p, **_position(p, local_noon(first), sign_num)} for p in TEN_PLANETS]
         planets_end = [{"name": p, **_position(p, local_noon(last), sign_num)} for p in TEN_PLANETS]
@@ -743,11 +741,11 @@ def sign_period(sign_num: int, first: date_type, last: date_type, tz: str, *, pe
             moon_by_day.append({"date": d.isoformat(), "sign": pos["sign"], "sign_num": pos["sign_num"], "degree": pos["degree"], "house": pos["house"]})
         ruler = _ruler_info(sign_num, local_noon(first))
 
-    ingresses = _ingress_events(start, end, tz, sign_num, with_date=True)
+    ingresses = _ingress_events(start, end, tz, sign_num, ph, with_date=True)
     _mark_covered(aspects_to_sign + aspects_to_ruler, ingresses)
     hits_points = {a["planet"] for a in aspects_to_sign if a["covered_by"] is None}
-    periods, stations = _retro_periods(start, end, tz, sign_num, hits_points, with_date=True)
-    lunations = _lunation_events(start, end, tz, sign_num, with_date=True)
+    periods, stations = _retro_periods(start, end, tz, sign_num, hits_points, ph, with_date=True)
+    lunations = _lunation_events(start, end, tz, sign_num, ph, with_date=True)
     events = ingresses + stations + lunations + [a for a in aspects_to_sign + aspects_to_ruler if a["covered_by"] is None]
     events.sort(key=lambda e: e["datetime_utc"])
     featured = _pick_featured(events, 3)
@@ -756,15 +754,14 @@ def sign_period(sign_num: int, first: date_type, last: date_type, tz: str, *, pe
             e["local_times"] = _city_times(_parse_utc(e["datetime_utc"]))
 
     sun_start, sun_end = planets_start[0], planets_end[0]
-    span = "toda la semana" if period == "week" else "todo el mes"
     sun_ingress = next((e for e in ingresses if e["planet"] == "Sun"), None)
     if sun_ingress is not None:
         sun_sentence = sun_ingress["label"]
     else:
-        sun_sentence = f"El Sol recorre {es.sign(sun_start['sign'])} ({es.house(sun_start['house'])}) {span}."
+        sun_sentence = ph.sun_through(sun_start["sign"], sun_start["house"], period)
     moon_in_sign = [e for e in ingresses if e["kind"] == "moon_ingress" and e["house"] == 1]
     moon_sentence = moon_in_sign[0]["label"] if moon_in_sign else None
-    highlights = _unique([*(e["label"] for e in featured), moon_sentence, _retro_sentence(periods), sun_sentence], 5)
+    highlights = _unique([*(e["label"] for e in featured), moon_sentence, _retro_sentence(periods, ph), sun_sentence], 5)
 
     return {
         "sign": SIGN_NAMES[sign_num],
@@ -773,7 +770,7 @@ def sign_period(sign_num: int, first: date_type, last: date_type, tz: str, *, pe
         "from": first.isoformat(),
         "to": last.isoformat(),
         "tz": tz,
-        "city": es.city_of(tz),
+        "city": ph.city_of(tz),
         "orb": ORB,
         "ruler": ruler,
         "sign_points": _sign_points(sign_num),
@@ -794,11 +791,11 @@ def sign_period(sign_num: int, first: date_type, last: date_type, tz: str, *, pe
     }
 
 
-def sign_week(sign_num: int, first: date_type, tz: str) -> dict[str, Any]:
-    return sign_period(sign_num, first, first + timedelta(days=6), tz, period="week")
+def sign_week(sign_num: int, first: date_type, tz: str, lang: str = "es") -> dict[str, Any]:
+    return sign_period(sign_num, first, first + timedelta(days=6), tz, period="week", lang=lang)
 
 
-def sign_month(sign_num: int, year: int, month: int, tz: str) -> dict[str, Any]:
+def sign_month(sign_num: int, year: int, month: int, tz: str, lang: str = "es") -> dict[str, Any]:
     first = date_type(year, month, 1)
     last = (date_type(year + (month == 12), month % 12 + 1, 1)) - timedelta(days=1)
-    return sign_period(sign_num, first, last, tz, period="month")
+    return sign_period(sign_num, first, last, tz, period="month", lang=lang)

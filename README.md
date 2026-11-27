@@ -32,9 +32,11 @@ All routes except `/v1/health` require the `X-Calc-Key` header (constant-time co
 | `POST /v1/today` | `{date, tz?}` | `{sun, moon:{sign, degree, at_00_00, at_23_59, next_sign_change, changes_sign_today, phase}, planets, aspects, retrogrades, next_lunation}` |
 | `POST /v1/sign-year` | `{sign, year, tz?}` | `{sun_season, planets:[{planet, periods, ingresses}], events, eclipses, mercury_retrogrades}` |
 | `POST /v1/solar-return-next` | `{natal:{…}, after?, tz?}` | `{next:{year, age, return_datetime_local, return_datetime_utc, days_until}, previous, natal_sun, warnings}` |
-| `POST /v1/sign-day` | `{sign, date, tz?}` | `{ruler, sun, moon:{…, houses_today, next_sign_change}, planets, aspects_to_sign, aspects_to_ruler, retrogrades, events, sky_aspects, featured, highlights}` |
-| `POST /v1/sign-week` | `{sign, from, tz?}` (7 días desde `from`) | `{moon_by_day, moon_ingresses, aspects_to_sign, aspects_to_ruler, retrogrades, lunations, events, featured, highlights}` |
-| `POST /v1/sign-month` | `{sign, year, month, tz?}` | igual que `sign-week` para el mes natural |
+| `POST /v1/sign-day` | `{sign, date, tz?, lang?:"es"\|"en"}` | `{ruler, sun, moon:{…, houses_today, next_sign_change}, planets, aspects_to_sign, aspects_to_ruler, retrogrades, events, sky_aspects, featured, highlights}` |
+| `POST /v1/sign-week` | `{sign, from, tz?, lang?}` (7 días desde `from`) | `{moon_by_day, moon_ingresses, aspects_to_sign, aspects_to_ruler, retrogrades, lunations, events, featured, highlights}` |
+| `POST /v1/sign-month` | `{sign, year, month, tz?, lang?}` | igual que `sign-week` para el mes natural |
+
+In `sign-day`, `sign-week` and `sign-month`, `lang` (`"es"` by default, or `"en"`) sets the language of the short data sentences (`highlights` and the `label` of each event) and of `city`; the rest of the response is the same in both languages. The sentences state facts only, and every time carries its city, as in `"La Luna entra en Escorpio, tu casa 1, a las 23:39 (hora de Madrid)."` or `"The Moon enters Scorpio, your 1st house, at 23:39 (Madrid time)."` `sign-year` has no sentences.
 
 ## Run it
 
@@ -65,6 +67,9 @@ curl -s localhost:8000/v1/today -H "X-Calc-Key: dev-key" -H "content-type: appli
 
 curl -s localhost:8000/v1/natal -H "X-Calc-Key: dev-key" -H "content-type: application/json" \
   -d '{"date":"1990-04-12","time":"08:30","lat":40.4168,"lon":-3.7038,"tz":"Europe/Madrid","house_system":"P"}'
+
+curl -s localhost:8000/v1/sign-day -H "X-Calc-Key: dev-key" -H "content-type: application/json" \
+  -d '{"sign":"Scorpio","date":"2026-11-07","tz":"America/Mexico_City","lang":"en"}'
 ```
 
 ## How Astroletra uses it
@@ -89,7 +94,7 @@ Servicio de cálculo astronómico y astrológico de [Astroletra](https://astrole
 - El cielo del día en cualquier zona horaria: la Luna, las fases, los aspectos exactos con su hora local, los retrógrados y la próxima lunación.
 - Las lunaciones y los eclipses, los periodos retrógrados con sus fechas de sombra y los elementos besselianos de los eclipses de Sol.
 - Cartas natales, sinastría, retorno solar y tránsitos, con una rueda SVG propia.
-- Los datos por signo de un día, una semana, un mes o un año. Solo datos, sin interpretación.
+- Los datos por signo de un día, una semana, un mes o un año. Solo datos, sin interpretación. Las frases cortas de `sign-day`, `sign-week` y `sign-month` salen en castellano y, con `"lang": "en"`, en inglés.
 - Tiradas de tarot reproducibles por semilla y conversión de HTML a PDF.
 
 **Cómo se ejecuta.** Con Docker, `docker compose up --build` después de poner `CALC_KEY` en `.env`. Las rutas y los ejemplos son los de arriba.

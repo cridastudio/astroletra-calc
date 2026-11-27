@@ -221,6 +221,10 @@ def parse_sign(v: str) -> str:
 class SignRequest(BaseModel):
     sign: str = Field(description="English sign name (Taurus), sign_num 0-11 as string or Spanish name (tauro)")
     tz: str = Field(default="UTC", description="IANA zone for the local date-times")
+    lang: Literal["es", "en"] = Field(
+        default="es",
+        description="Language of the short data sentences (label, highlights) and of city; sign-year has none",
+    )
 
     @field_validator("sign")
     @classmethod
